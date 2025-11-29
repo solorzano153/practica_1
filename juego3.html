@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Atrapa a la liebre</title>
+  <style>
+    /* Área de juego */
+    #gameArea {
+      width: 300px;              /* ancho del área */
+      height: 300px;             /* alto del área */
+      border: 2px solid black;   /* borde */
+      position: relative;        /* permite posicionar elementos dentro */
+      margin: 20px auto;         /* centra el área */
+      background-color: #f0f0f0; /* color de fondo */
+    }
+
+    /* la liebre (cuadrado gris) */
+    #enemy {
+      width: 30px;               /* ancho */
+      height: 30px;              /* alto */
+      background-color: rgb(177, 169, 169);     /* color */
+      position: absolute;        /* posición absoluta dentro del área */
+      cursor: pointer;           /* cursor de mano */
+    }
+
+    /* Marcador */
+    #score {
+      text-align: center;
+      font-size: 18px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h2 style="text-align:center;">💥 Haz clic en la liebre</h2>
+
+  <!-- Área de juego -->
+  <div id="gameArea">
+    <!-- Enemigo -->
+    <div id="enemy"></div>
+  </div>
+
+  <!-- Marcador -->
+  <div id="score">Puntos: 0</div>
+
+  <script>
+    // Seleccionamos elementos del DOM
+    const enemy = document.getElementById("enemy");
+    const gameArea = document.getElementById("gameArea");
+    const scoreDisplay = document.getElementById("score");
+
+    // Variable para el puntaje
+    let score = 0;
+
+    // Función para mover al enemigo a una posición aleatoria
+    function moveEnemy() {
+      const maxX = gameArea.clientWidth - enemy.clientWidth;
+      const maxY = gameArea.clientHeight - enemy.clientHeight;
+
+      const randomX = Math.floor(Math.random() * maxX);
+      const randomY = Math.floor(Math.random() * maxY);
+
+      enemy.style.left = randomX + "px";
+      enemy.style.top = randomY + "px";
+    }
+
+    // Evento: clic en el enemigo
+    enemy.addEventListener("click", () => {
+      score++; // aumenta el puntaje
+      scoreDisplay.textContent = "Puntos: " + score; // actualiza marcador
+      moveEnemy(); // mueve el enemigo a otra posición
+    });
+
+    // Inicializamos el juego
+    moveEnemy();
+  </script>
+</body>
+</html>
