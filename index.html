@@ -1,49 +1,117 @@
 <!DOCTYPE html> <!-- Indica que el documento es HTML5 -->
-<html lang="es"> <!-- Define el idioma del documento como español -->
+<html lang="es"> <!-- Define que el idioma del documento es español -->
 <head>
   <meta charset="UTF-8"> <!-- Configura la codificación de caracteres en UTF-8 -->
   <title>Snake Básico</title> <!-- Título que aparece en la pestaña del navegador -->
   <style>
-    /* Área de juego */
-    #gameArea {
-      width: 200px;              /* ancho del área de juego */
-      height: 200px;             /* alto del área de juego */
-      border: 2px solid black;   /* borde negro alrededor */
-      position: relative;        /* permite posicionar elementos dentro con coordenadas absolutas */
-      margin: 20px auto;         /* centra el área horizontalmente y le da margen arriba/abajo */
-      background-color: #f0f0f0; /* color de fondo gris claro */
+    /* Estilo del área de juego */
+    #area {
+      width: 200px;              /* Ancho del área de juego */
+      height: 200px;             /* Alto del área de juego */
+      border: 2px solid black;   /* Borde negro alrededor */
+      position: relative;        /* Permite posicionar elementos dentro con coordenadas absolutas */
+      margin: 20px auto;         /* Centra el área horizontalmente y le da margen arriba/abajo */
+      background-color: #f0f0f0; /* Color de fondo gris claro */
     }
-
-    /* La serpiente (solo un cuadrado en esta versión básica) */
-    #snake {
-      width: 20px;               /* ancho del cuadrado de la serpiente */
-      height: 20px;              /* alto del cuadrado de la serpiente */
-      background-color: green;   /* color verde para la serpiente */
-      position: absolute;        /* posición absoluta dentro del área de juego */
-      left: 20px;                /* posición inicial en el eje X */
-      top: 20px;                 /* posición inicial en el eje Y */
+    /* Estilo de la serpiente (un cuadrado verde) */
+    #serpiente {
+      width: 20px;               /* Ancho del cuadrado */
+      height: 20px;              /* Alto del cuadrado */
+      background-color: green;   /* Color verde */
+      position: absolute;        /* Posición absoluta dentro del área */
+      left: 20px;                /* Posición inicial en X */
+      top: 20px;                 /* Posición inicial en Y */
     }
-
-    /* La comida */
-    #food {
-      width: 20px;               /* ancho de la comida */
-      height: 20px;              /* alto de la comida */
-      background-color: red;     /* color rojo para la comida */
-      position: absolute;        /* posición absoluta dentro del área de juego */
+    /* Estilo de la comida (un cuadrado rojo) */
+    #comida {
+      width: 20px;               /* Ancho de la comida */
+      height: 20px;              /* Alto de la comida */
+      background-color: red;     /* Color rojo */
+      position: absolute;        /* Posición absoluta dentro del área */
     }
-
-    /* Marcador */
-    #score {
-      text-align: center;        /* centra el texto horizontalmente */
-      font-size: 18px;           /* tamaño de la fuente */
-      margin-top: 10px;          /* espacio arriba del marcador */
+    /* Estilo del marcador */
+    #marcador {
+      text-align: center;        /* Centra el texto */
+      font-size: 18px;           /* Tamaño de la fuente */
+      margin-top: 10px;          /* Espacio arriba del marcador */
     }
   </style>
 </head>
 <body>
   <h2 style="text-align:center;">🐍 Snake Básico</h2> <!-- Título visible en la página -->
-
-  <!-- Área de juego -->
+  <div id="area"> <!-- Área de juego -->
+    <div id="serpiente"></div> <!-- Cuadrado verde que representa la serpiente -->
+    <div id="comida"></div>    <!-- Cuadrado rojo que representa la comida -->
+  </div>
+  <div id="marcador">Puntos: 0</div> <!-- Texto que muestra los puntos -->
+  <script>
+    // Guardamos en variables los elementos del HTML para poder manipularlos
+    var serpiente = document.getElementById("serpiente"); // La serpiente
+    var comida = document.getElementById("comida");       // La comida
+    var marcador = document.getElementById("marcador");   // El marcador de puntos
+    var area = document.getElementById("area");           // El área de juego
+    // Variables para la posición de la serpiente
+    var posX = 20; // Posición inicial en X
+    var posY = 20; // Posición inicial en Y
+    var direccion = "derecha"; // Dirección inicial de movimiento
+    var puntos = 0; // Puntaje inicial
+    // ---------------- FUNCIONES ----------------
+    // Función que coloca la comida en una posición aleatoria dentro del área
+    function ponerComida() {
+      var maxX = area.clientWidth - comida.clientWidth;   // Máximo valor en X dentro del área
+      var maxY = area.clientHeight - comida.clientHeight; // Máximo valor en Y dentro del área
+      var aleatorioX = Math.floor(Math.random() * (maxX / 20)) * 20; // Número aleatorio múltiplo de 20 en X
+      var aleatorioY = Math.floor(Math.random() * (maxY / 20)) * 20; // Número aleatorio múltiplo de 20 en Y
+      comida.style.left = aleatorioX + "px"; // Asigna la posición X a la comida
+      comida.style.top = aleatorioY + "px";  // Asigna la posición Y a la comida
+    }
+    // Función que mueve la serpiente según la dirección actual
+    function moverSerpiente() {
+      // Cambia la posición de la serpiente dependiendo de la dirección
+      if (direccion == "derecha") posX += 20;     // Si va a la derecha, aumenta X
+      else if (direccion == "izquierda") posX -= 20; // Si va a la izquierda, disminuye X
+      else if (direccion == "arriba") posY -= 20;    // Si va hacia arriba, disminuye Y
+      else if (direccion == "abajo") posY += 20;     // Si va hacia abajo, aumenta Y
+      // Actualiza la posición de la serpiente en la pantalla
+      serpiente.style.left = posX + "px";
+      serpiente.style.top = posY + "px";
+      // Verifica si la serpiente está en la misma posición que la comida
+      if (posX == comida.offsetLeft && posY == comida.offsetTop) {
+        puntos++; // Suma un punto
+        marcador.innerHTML = "Puntos: " + puntos; // Actualiza el marcador
+        ponerComida(); // Coloca la comida en otra posición
+      }
+      // Verifica si la serpiente se salió del área de juego
+      if (posX < 0 || posY < 0 || posX >= 200 || posY >= 200) {
+        alert("💀 ¡Has perdido!"); // Muestra mensaje de derrota
+        reiniciarJuego(); // Reinicia el juego
+      }
+    }
+    // Función que reinicia el juego cuando se pierde
+    function reiniciarJuego() {
+      posX = 20; // Reinicia posición X
+      posY = 20; // Reinicia posición Y
+      direccion = "derecha"; // Reinicia dirección
+      puntos = 0; // Reinicia puntos
+      marcador.innerHTML = "Puntos: " + puntos; // Reinicia marcador
+      ponerComida(); // Coloca nueva comida
+      serpiente.style.left = posX + "px"; // Reinicia posición X de la serpiente
+      serpiente.style.top = posY + "px";  // Reinicia posición Y de la serpiente
+    }
+    // Evento que detecta cuando se presiona una tecla
+    document.addEventListener("keydown", function(evento) {
+      // Cambia la dirección según la tecla presionada
+      if (evento.key == "ArrowUp") direccion = "arriba";       // Flecha arriba
+      else if (evento.key == "ArrowDown") direccion = "abajo"; // Flecha abajo
+      else if (evento.key == "ArrowLeft") direccion = "izquierda"; // Flecha izquierda
+      else if (evento.key == "ArrowRight") direccion = "derecha";  // Flecha derecha
+    });
+    // ---------------- INICIO DEL JUEGO ----------------
+    ponerComida(); // Coloca la primera comida
+    setInterval(moverSerpiente, 500); // Mueve la serpiente cada 500 milisegundos
+  </script>
+</body>
+</html>
   <div id="gameArea">
     <!-- Serpiente -->
     <div id="snake"></div>
@@ -133,3 +201,4 @@
   </script>
 </body>
 </html>
+
